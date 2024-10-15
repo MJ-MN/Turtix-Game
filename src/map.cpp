@@ -90,14 +90,14 @@ void Map::init_background_sprite(const sf::Vector2i& center_pos)
 void Map::update_background_sprite(const sf::Vector2i& center_pos)
 {
 	if (center_pos.x > last_center_pos.x) {
-		this->update_right_frames(center_pos.x);
+		this->update_right_frames(center_pos);
 	} else if (center_pos.x < last_center_pos.x) {
-		this->update_left_frames(center_pos.x);
+		this->update_left_frames(center_pos);
 	}
 	if (center_pos.y > last_center_pos.y) {
-		this->update_bottom_frames(center_pos.y);
+		this->update_bottom_frames(center_pos);
 	} else if (center_pos.y < last_center_pos.y) {
-		this->update_top_frames(center_pos.y);
+		this->update_top_frames(center_pos);
 	}
 	this->last_center_pos = center_pos;
 }

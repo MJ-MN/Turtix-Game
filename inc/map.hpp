@@ -44,10 +44,10 @@ private:
 	sf::Vector2i find_init_frame(void);
 	void load_background_texture(void);
 	void update_frame_sprite(const sf::Vector2i& frame_pos, const sf::Vector2i& perv_frame_pos);
-	void update_right_frames(int pos_x);
-	void update_left_frames(int pos_x);
-	void update_bottom_frames(int pos_y);
-	void update_top_frames(int pos_y);
+	void update_right_frames(const sf::Vector2i& center_pos);
+	void update_left_frames(const sf::Vector2i& center_pos);
+	void update_bottom_frames(const sf::Vector2i& center_pos);
+	void update_top_frames(const sf::Vector2i& center_pos);
 	int get_frame_number(const sf::Vector2i& frame_pos) const;
 	sf::Vector2i check_frame_pos(int x, int y) const;
 	sf::FloatRect get_solid_frame_rect(const sf::Vector2i& frame_pos, int solidity);
