@@ -22,24 +22,17 @@ Map::~Map()
 
 }
 
-int Map::get_cols(void) const
+sf::Vector2i Map::get_size(void) const
 {
-	return this->bg_frame_numbers[0].size();
+	return sf::Vector2i(
+		this->bg_frame_numbers[0].size(),
+		this->bg_frame_numbers.size()
+	);
 }
 
-int Map::get_rows(void) const
+sf::Vector2i Map::get_margin_size(void) const
 {
-	return this->bg_frame_numbers.size();
-}
-
-int Map::get_margin_col(void) const
-{
-	return this->map_margin.x;
-}
-
-int Map::get_margin_row(void) const
-{
-	return this->map_margin.y;
+	return this->map_margin;
 }
 
 void Map::load_background_frame_numbers(void)
@@ -82,10 +75,6 @@ void Map::load_background_texture(void)
 
 void Map::init_background_sprite(const sf::Vector2i& center_pos)
 {
-	this->map_margin = {
-		center_pos.x - WIDTH_FRAMES / 2,
-		center_pos.y - HEIGHT_FRAMES / 2 - HEIGHT_OFFSET_FRAME
-	};
 
 	for (int y = -1; y <= HEIGHT_FRAMES; y++) {
 		for (int x = -1; x <= WIDTH_FRAMES; x++) {
@@ -100,64 +89,80 @@ void Map::init_background_sprite(const sf::Vector2i& center_pos)
 
 void Map::update_background_sprite(const sf::Vector2i& center_pos)
 {
-	sf::Vector2i new_frame_pos;
-	sf::Vector2i curr_frame_pos;
-
 	if (center_pos.x > last_center_pos.x) {
-		for (int y = -1; y <= HEIGHT_FRAMES; y++) {
-			new_frame_pos = {
-				center_pos.x + WIDTH_FRAMES / 2 + 1,
-				center_pos.y + y - HEIGHT_FRAMES / 2
-			};
-			curr_frame_pos = check_frame_pos(top_left_frame.x, top_left_frame.y + y + 1);
-			this->update_frame_sprite(new_frame_pos, curr_frame_pos);
-		}
-		top_left_frame = check_frame_pos(top_left_frame.x + 1, top_left_frame.y);
+		this->update_right_frames(center_pos.x);
 	} else if (center_pos.x < last_center_pos.x) {
-		for (int y = -1; y <= HEIGHT_FRAMES; y++) {
-			new_frame_pos = {
-				center_pos.x - WIDTH_FRAMES / 2 - 1,
-				center_pos.y + y - HEIGHT_FRAMES / 2
-			};
-			curr_frame_pos = check_frame_pos(top_left_frame.x + WIDTH_FRAMES + 1, top_left_frame.y + y + 1);
-			this->update_frame_sprite(new_frame_pos, curr_frame_pos);
-		}
-		top_left_frame = check_frame_pos(top_left_frame.x - 1, top_left_frame.y);
+		this->update_left_frames(center_pos.x);
 	}
 	if (center_pos.y > last_center_pos.y) {
-		for (int x = -1; x <= WIDTH_FRAMES; x++) {
-			new_frame_pos = {
-				center_pos.x + x - WIDTH_FRAMES / 2,
-				center_pos.y + HEIGHT_FRAMES / 2 + 1
-			};
-			curr_frame_pos = check_frame_pos(top_left_frame.x + x + 1, top_left_frame.y);
-			this->update_frame_sprite(new_frame_pos, curr_frame_pos);
-		}
-		top_left_frame = check_frame_pos(top_left_frame.x, top_left_frame.y + 1);
+		this->update_bottom_frames(center_pos.y);
 	} else if (center_pos.y < last_center_pos.y) {
-		for (int x = -1; x <= WIDTH_FRAMES; x++) {
-			new_frame_pos = {
-				center_pos.x + x - WIDTH_FRAMES / 2,
-				center_pos.y - HEIGHT_FRAMES / 2 - 1
-			};
-			curr_frame_pos = check_frame_pos(top_left_frame.x + x + 1, top_left_frame.y + HEIGHT_FRAMES + 1);
-			this->update_frame_sprite(new_frame_pos, curr_frame_pos);
-		}
-		top_left_frame = check_frame_pos(top_left_frame.x, top_left_frame.y - 1);
+		this->update_top_frames(center_pos.y);
 	}
-	last_center_pos = center_pos;
+	this->last_center_pos = center_pos;
+}
+
+void Map::update_right_frames(const sf::Vector2i& center_pos)
+{
+	for (int y = -1; y <= HEIGHT_FRAMES; y++) {
+		sf::Vector2i new_frame_pos(
+			center_pos.x + WIDTH_FRAMES / 2 + 1,
+			center_pos.y + y - HEIGHT_FRAMES / 2
+		);
+		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x, this->top_left_frame.y + y + 1);
+		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
+	}
+	this->top_left_frame = check_frame_pos(this->top_left_frame.x + 1, this->top_left_frame.y);
+}
+
+void Map::update_left_frames(const sf::Vector2i& center_pos)
+{
+	for (int y = -1; y <= HEIGHT_FRAMES; y++) {
+		sf::Vector2i new_frame_pos(
+			center_pos.x - WIDTH_FRAMES / 2 - 1,
+			center_pos.y + y - HEIGHT_FRAMES / 2
+		);
+		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + WIDTH_FRAMES + 1, this->top_left_frame.y + y + 1);
+		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
+	}
+	this->top_left_frame = check_frame_pos(this->top_left_frame.x - 1, this->top_left_frame.y);
+}
+
+void Map::update_bottom_frames(const sf::Vector2i& center_pos)
+{
+	for (int x = -1; x <= WIDTH_FRAMES; x++) {
+		sf::Vector2i new_frame_pos(
+			center_pos.x + x - WIDTH_FRAMES / 2,
+			center_pos.y + HEIGHT_FRAMES / 2 + 1
+		);
+		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + x + 1, this->top_left_frame.y);
+		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
+	}
+	this->top_left_frame = check_frame_pos(this->top_left_frame.x, this->top_left_frame.y + 1);
+}
+
+void Map::update_top_frames(const sf::Vector2i& center_pos)
+{
+	for (int x = -1; x <= WIDTH_FRAMES; x++) {
+		sf::Vector2i new_frame_pos(
+			center_pos.x + x - WIDTH_FRAMES / 2,
+			center_pos.y - HEIGHT_FRAMES / 2 - 1
+		);
+		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + x + 1, this->top_left_frame.y + HEIGHT_FRAMES + 1);
+		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
+	}
+	this->top_left_frame = check_frame_pos(this->top_left_frame.x, this->top_left_frame.y - 1);
 }
 
 void Map::update_frame_sprite(const sf::Vector2i& frame_pos, const sf::Vector2i& perv_frame_pos)
 {
-	int frame_number = this->bg_frame_numbers[frame_pos.y][frame_pos.x];
+	int frame_number = get_frame_number(frame_pos);
 	sf::Vertex* squares = &(this->bgVertices[((perv_frame_pos.x + 1) + (perv_frame_pos.y + 1) * (WIDTH_FRAMES + 2)) * POINTS_IN_FRAME]);
-	sf::Vector2i rel_frame_pos = frame_pos - map_margin;
 
-	squares[0].position = sf::Vector2f(rel_frame_pos.x * FRAME_SIZE, rel_frame_pos.y * FRAME_SIZE);
-	squares[1].position = squares[4].position = sf::Vector2f(rel_frame_pos.x * FRAME_SIZE, (rel_frame_pos.y + 1) * FRAME_SIZE);
-	squares[2].position = squares[3].position = sf::Vector2f((rel_frame_pos.x + 1) * FRAME_SIZE, rel_frame_pos.y * FRAME_SIZE);
-	squares[5].position = sf::Vector2f((rel_frame_pos.x + 1) * FRAME_SIZE, (rel_frame_pos.y + 1) * FRAME_SIZE);
+	squares[0].position = sf::Vector2f(frame_pos.x * FRAME_SIZE, frame_pos.y * FRAME_SIZE);
+	squares[1].position = squares[4].position = sf::Vector2f(frame_pos.x * FRAME_SIZE, (frame_pos.y + 1) * FRAME_SIZE);
+	squares[2].position = squares[3].position = sf::Vector2f((frame_pos.x + 1) * FRAME_SIZE, frame_pos.y * FRAME_SIZE);
+	squares[5].position = sf::Vector2f((frame_pos.x + 1) * FRAME_SIZE, (frame_pos.y + 1) * FRAME_SIZE);
 	if (frame_number != -1) {
 		sf::Vector2i tile_frame_pos(frame_number % 10, frame_number / 10);
 		squares[0].texCoords = sf::Vector2f(tile_frame_pos.x * FRAME_SIZE, tile_frame_pos.y * FRAME_SIZE);
@@ -194,16 +199,19 @@ sf::Vector2i Map::check_frame_pos(int x, int y) const
 	return sf::Vector2i(x, y);
 }
 
-sf::Vector2i Map::find_init_frame(void) const
+sf::Vector2i Map::find_init_frame(void)
 {
 	sf::Vector2i init_frame_pos(WIDTH_FRAMES / 2, HEIGHT_FRAMES / 2);
 
 	for (int y = 0; y < this->bg_frame_numbers.size(); y++) {
 		for (int x = 0; x < this->bg_frame_numbers[y].size(); x++) {
 			if (this->bg_frame_numbers[y][x] == INIT_FRAME) {
-				init_frame_pos.x = x;
-				init_frame_pos.y = y;
-				return init_frame_pos;
+				this->map_margin = {
+					x - WIDTH_FRAMES / 2,
+					y - HEIGHT_FRAMES / 2 - HEIGHT_OFFSET_FRAME
+				};
+				init_frame_pos = { x, y };
+				return init_frame_pos - map_margin;
 			}
 		}
 	}
@@ -217,7 +225,6 @@ sf::Vector2i Map::find_center_frame(const sf::View* view) const
 		(int)(view_center_pos.x / SCALED_FRAME_SIZE),
 		(int)(view_center_pos.y / SCALED_FRAME_SIZE)
 	};
-	center_frame_pos += map_margin;
 	return center_frame_pos;
 }
 
@@ -262,21 +269,21 @@ float Map::is_valid_x(const sf::FloatRect& turtixRect, float v_x)
 		if (v_x > 0.0f) {
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_RIGHT);
 			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_x = solidFrameRect.left - turtixRect.left - turtixRect.width - 1;
+				penalty_x = solidFrameRect.left - turtixRect.left - turtixRect.width;
 			}
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_RIGHT);
 			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_x = solidFrameRect.left - turtixRect.left - turtixRect.width - 1;
+				penalty_x = solidFrameRect.left - turtixRect.left - turtixRect.width;
 			}
 		}
 		if (v_x < 0.0f) {
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_LEFT);
 			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_x = solidFrameRect.left + solidFrameRect.width - turtixRect.left + 1;
+				penalty_x = solidFrameRect.left + solidFrameRect.width - turtixRect.left;
 			}
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_LEFT);
 			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_x = solidFrameRect.left + solidFrameRect.width - turtixRect.left + 1;
+				penalty_x = solidFrameRect.left + solidFrameRect.width - turtixRect.left;
 			}
 		}
 	}
@@ -298,21 +305,21 @@ float Map::is_valid_y(const sf::FloatRect& turtixRect, float v_y)
 		if (v_y > 0.0f) {
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_LEFT);
 			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_y = solidFrameRect.top - turtixRect.top - turtixRect.height - 1;
+				penalty_y = solidFrameRect.top - turtixRect.top - turtixRect.height;
 			}
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_RIGHT);
 			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_y = solidFrameRect.top - turtixRect.top - turtixRect.height - 1;
+				penalty_y = solidFrameRect.top - turtixRect.top - turtixRect.height;
 			}
 		}
 		if (v_y < 0.0f) {
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_LEFT);
 			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_y = solidFrameRect.top + solidFrameRect.height - turtixRect.top + 1;
+				penalty_y = solidFrameRect.top + solidFrameRect.height - turtixRect.top;
 			}
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_RIGHT);
 			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_y = solidFrameRect.top + solidFrameRect.height - turtixRect.top + 1;
+				penalty_y = solidFrameRect.top + solidFrameRect.height - turtixRect.top;
 			}
 		}
 	}
