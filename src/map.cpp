@@ -90,24 +90,25 @@ void Map::init_background_sprite(const sf::Vector2i& center_pos)
 void Map::update_background_sprite(const sf::Vector2i& center_pos)
 {
 	if (center_pos.x > last_center_pos.x) {
-		this->update_right_frames(center_pos);
+		this->update_right_frames(center_pos.x);
 	} else if (center_pos.x < last_center_pos.x) {
-		this->update_left_frames(center_pos);
+		this->update_left_frames(center_pos.x);
 	}
+	this->last_center_pos.x = center_pos.x;
 	if (center_pos.y > last_center_pos.y) {
-		this->update_bottom_frames(center_pos);
+		this->update_bottom_frames(center_pos.y);
 	} else if (center_pos.y < last_center_pos.y) {
-		this->update_top_frames(center_pos);
+		this->update_top_frames(center_pos.y);
 	}
-	this->last_center_pos = center_pos;
+	this->last_center_pos.y = center_pos.y;
 }
 
-void Map::update_right_frames(const sf::Vector2i& center_pos)
+void Map::update_right_frames(int pos_x)
 {
 	for (int y = -1; y <= HEIGHT_FRAMES; y++) {
 		sf::Vector2i new_frame_pos(
-			center_pos.x + WIDTH_FRAMES / 2 + 1,
-			center_pos.y + y - HEIGHT_FRAMES / 2
+			pos_x + WIDTH_FRAMES / 2 + 1,
+			this->last_center_pos.y + y - HEIGHT_FRAMES / 2
 		);
 		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x, this->top_left_frame.y + y + 1);
 		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
@@ -115,12 +116,12 @@ void Map::update_right_frames(const sf::Vector2i& center_pos)
 	this->top_left_frame = check_frame_pos(this->top_left_frame.x + 1, this->top_left_frame.y);
 }
 
-void Map::update_left_frames(const sf::Vector2i& center_pos)
+void Map::update_left_frames(int pos_x)
 {
 	for (int y = -1; y <= HEIGHT_FRAMES; y++) {
 		sf::Vector2i new_frame_pos(
-			center_pos.x - WIDTH_FRAMES / 2 - 1,
-			center_pos.y + y - HEIGHT_FRAMES / 2
+			pos_x - WIDTH_FRAMES / 2 - 1,
+			this->last_center_pos.y + y - HEIGHT_FRAMES / 2
 		);
 		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + WIDTH_FRAMES + 1, this->top_left_frame.y + y + 1);
 		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
@@ -128,12 +129,12 @@ void Map::update_left_frames(const sf::Vector2i& center_pos)
 	this->top_left_frame = check_frame_pos(this->top_left_frame.x - 1, this->top_left_frame.y);
 }
 
-void Map::update_bottom_frames(const sf::Vector2i& center_pos)
+void Map::update_bottom_frames(int pos_y)
 {
 	for (int x = -1; x <= WIDTH_FRAMES; x++) {
 		sf::Vector2i new_frame_pos(
-			center_pos.x + x - WIDTH_FRAMES / 2,
-			center_pos.y + HEIGHT_FRAMES / 2 + 1
+			this->last_center_pos.x + x - WIDTH_FRAMES / 2,
+			pos_y + HEIGHT_FRAMES / 2 + 1
 		);
 		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + x + 1, this->top_left_frame.y);
 		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
@@ -141,12 +142,12 @@ void Map::update_bottom_frames(const sf::Vector2i& center_pos)
 	this->top_left_frame = check_frame_pos(this->top_left_frame.x, this->top_left_frame.y + 1);
 }
 
-void Map::update_top_frames(const sf::Vector2i& center_pos)
+void Map::update_top_frames(int pos_y)
 {
 	for (int x = -1; x <= WIDTH_FRAMES; x++) {
 		sf::Vector2i new_frame_pos(
-			center_pos.x + x - WIDTH_FRAMES / 2,
-			center_pos.y - HEIGHT_FRAMES / 2 - 1
+			this->last_center_pos.x + x - WIDTH_FRAMES / 2,
+			pos_y - HEIGHT_FRAMES / 2 - 1
 		);
 		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + x + 1, this->top_left_frame.y + HEIGHT_FRAMES + 1);
 		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
