@@ -31,3 +31,6 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c* $(INCDIR)/%.h*
 
 clean:
 	rm -r $(BUILDDIR) $(BINDIR)
+
+install:
+	7za x Sprite.7z
