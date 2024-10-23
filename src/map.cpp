@@ -232,11 +232,15 @@ sf::FloatRect Map::get_solid_frame_rect(const sf::Vector2i& frame_pos, int solid
 {
 	int frame_number = get_frame_number(frame_pos);
 	sf::Vector2f rect_pos(0.0f, 0.0f);
-	sf::Vector2f rect_size(SCALED_FRAME_SIZE * 0.6f, SCALED_FRAME_SIZE * 0.6f);
+	sf::Vector2f rect_size(0.0f, 0.0f);
 
 	if (frame_number == -1) {
 		return sf::FloatRect(rect_pos, rect_size);
 	}
+	rect_size = {
+		SCALED_FRAME_SIZE * 0.6f,
+		SCALED_FRAME_SIZE * 0.6f
+	};
 	switch (this->frames_solidity[frame_number] & solidity) {
 	case Solidity::TOP_LEFT:
 		rect_pos = { (float)frame_pos.x * SCALED_FRAME_SIZE, (float)frame_pos.y * SCALED_FRAME_SIZE };
@@ -268,21 +272,21 @@ float Map::is_valid_x(const sf::FloatRect& turtixRect, float v_x)
 	for (int i = 0; i < 4; i++) {
 		if (v_x > 0.0f) {
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_RIGHT);
-			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
+			if (solidFrameRect.width != 0.0f && turtixRect.intersects(solidFrameRect)) {
 				penalty_x = solidFrameRect.left - turtixRect.left - turtixRect.width;
 			}
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_RIGHT);
-			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
+			if (solidFrameRect.width != 0.0f && turtixRect.intersects(solidFrameRect)) {
 				penalty_x = solidFrameRect.left - turtixRect.left - turtixRect.width;
 			}
 		}
 		if (v_x < 0.0f) {
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_LEFT);
-			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
+			if (solidFrameRect.width != 0.0f && turtixRect.intersects(solidFrameRect)) {
 				penalty_x = solidFrameRect.left + solidFrameRect.width - turtixRect.left;
 			}
 			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_LEFT);
-			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
+			if (solidFrameRect.width != 0.0f && turtixRect.intersects(solidFrameRect)) {
 				penalty_x = solidFrameRect.left + solidFrameRect.width - turtixRect.left;
 			}
 		}

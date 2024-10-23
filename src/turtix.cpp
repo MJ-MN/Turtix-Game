@@ -55,8 +55,6 @@ void Turtix::move(const Key* key, float dt)
 
 void Turtix::move_x(sf::FloatRect& turtixRect, const Key* key, float dt)
 {
-	float penalty = 0.0f;
-
 	if (key->right_pressed) {
 		if (this->movement_x->get_v() == 0.0f) {
 			this->movement_x->set_v(INITIAL_SPEED);
@@ -88,10 +86,9 @@ void Turtix::move_x(sf::FloatRect& turtixRect, const Key* key, float dt)
 
 void Turtix::move_y(sf::FloatRect& turtixRect, const Key* key, float dt)
 {
-	float penalty = 0.0f;
-
-	if (key->up_pressed && !key->last_up_pressed) {
+	if (key->up_pressed && !key->last_up_pressed && this->movement_y->is_on_the_ground()) {
 		this->movement_y->set_v(-JUMP_SPEED);
+		this->movement_y->set_on_the_ground(false);
 	}
 	this->movement_y->calc_y(turtixRect, dt);
 }

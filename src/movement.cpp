@@ -46,22 +46,6 @@ void Movement::calc_r(float dt)
 void Movement::calc_v(float dt)
 {
 	this->v = this->a * (dt / ONE_SECOND_MS) + this->v;
-	if (this->v < -MAX_SPEED) {
-		this->v = -MAX_SPEED;
-	} else if (this->v > MAX_SPEED) {
-		this->v = MAX_SPEED;
-	}
-}
-
-void Movement::check_v(float penalty, float dt)
-{
-	if (penalty == 0.0f) {
-		this->calc_v(dt);
-	} else if (penalty > 0.0f) {
-		this->v = -INITIAL_SPEED;
-	} else {
-		this->v = INITIAL_SPEED;
-	}
 }
 
 MovementX::MovementX(Map* _map, float _r, float _v, float _a)
@@ -87,9 +71,26 @@ void MovementX::calc_x(sf::FloatRect& rect, float dt)
 	this->check_v(penalty, dt);
 }
 
+void MovementX::check_v(float penalty, float dt)
+{
+	if (penalty == 0.0f) {
+		this->calc_v(dt);
+	} else if (penalty > 0.0f) {
+		this->v = -INITIAL_SPEED;
+	} else {
+		this->v = INITIAL_SPEED;
+	}
+	if (this->v < -MAX_SPEED) {
+		this->v = -MAX_SPEED;
+	} else if (this->v > MAX_SPEED) {
+		this->v = MAX_SPEED;
+	}
+}
+
 MovementY::MovementY(Map* _map, float _r, float _v, float _a)
 	: Movement(_r, _v, _a)
 {
+	this->on_the_ground = false;
 	this->map = _map;
 }
 
@@ -105,7 +106,31 @@ void MovementY::calc_y(sf::FloatRect& rect, float dt)
 	Movement::calc_r(dt);
 	rect.top = this->r;
 	penalty = this->map->is_valid_y(rect, this->v);
+	if (penalty < 0.0f) {
+		this->on_the_ground = true;
+	}
 	this->r += penalty;
 	rect.top = this->r;
 	this->check_v(penalty, dt);
+}
+
+void MovementY::check_v(float penalty, float dt)
+{
+	if (penalty == 0.0f) {
+		this->calc_v(dt);
+	} else if (penalty > 0.0f) {
+		this->v = -INITIAL_SPEED;
+	} else {
+		this->v = INITIAL_SPEED;
+	}
+}
+
+bool MovementY::is_on_the_ground(void) const
+{
+	return this->on_the_ground;
+}
+
+void MovementY::set_on_the_ground(bool state)
+{
+	this->on_the_ground = state;
 }
