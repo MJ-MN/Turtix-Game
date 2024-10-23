@@ -19,9 +19,4 @@ struct Key {
 	bool left_pressed;
 };
 
-struct Position {
-	int col;
-	int row;
-};
-
 #endif /* __MANUAL_HPP */

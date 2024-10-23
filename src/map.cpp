@@ -6,9 +6,8 @@
 
 using namespace std;
 
-Map::Map(sf::RenderWindow* _window)
+Map::Map()
 {
-	window = _window;
 	this->bgVertices.setPrimitiveType(sf::Triangles);
 	this->bgVertices.resize((WIDTH_FRAMES + 2) * (HEIGHT_FRAMES + 2) * POINTS_IN_FRAME);
 	this->load_background_frame_numbers();

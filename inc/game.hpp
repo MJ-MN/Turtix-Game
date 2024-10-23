@@ -20,7 +20,7 @@ class TurtixGame {
 private:
 	bool game_finished;
 	Key key;
-	Map* map; /* TODO */
+	Map map;
 	sf::RenderWindow* window;
 	sf::View* view;
 	Turtix* turtix;
