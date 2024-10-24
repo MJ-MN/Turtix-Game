@@ -6,9 +6,9 @@
 
 #define X_ACCELERATION 1000.0f
 #define X_DECELERATION (4.0f * X_ACCELERATION)
-#define Y_ACCELERATION 3000.0f
+#define Y_ACCELERATION 2000.0f
 #define INITIAL_SPEED 0.1f
-#define JUMP_SPEED 1300.0f
+#define JUMP_SPEED 1000.0f
 #define MAX_SPEED 800.0f
 #define SPEED_STEP (X_DECELERATION * LOOP_TIME_MS / ONE_SECOND_MS)
 
@@ -51,7 +51,6 @@ public:
 	~MovementY();
 	void calc_y(sf::FloatRect& rect, float dt);
 	bool is_on_the_ground(void) const;
-	void set_on_the_ground(bool state);
 };
 
 #endif /* __MOVEMENT_HPP */

@@ -20,15 +20,15 @@ private:
 	MovementX* movement_x;
 	MovementY* movement_y;
 
-	void move_x(sf::FloatRect& turtixRect, const Key* key, float dt);
-	void move_y(sf::FloatRect& turtixRect, const Key* key, float dt);
+	void move_x(sf::FloatRect& turtixRect, const Key& key, float dt);
+	void move_y(sf::FloatRect& turtixRect, const Key& key, float dt);
 public:
 	Turtix(sf::RenderWindow* _window, Map* _map);
 	virtual ~Turtix();
 	sf::Vector2f get_center_pos(void) const;
 	sf::FloatRect get_rect(void) const;
 	void draw(void);
-	void move(const Key* key, float dt);
+	void move(const Key& key, float dt);
 };
 
 #endif /* __TURTIX_HPP */

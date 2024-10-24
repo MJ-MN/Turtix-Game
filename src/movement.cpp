@@ -102,6 +102,7 @@ MovementY::~MovementY()
 void MovementY::calc_y(sf::FloatRect& rect, float dt)
 {
 	float penalty = 0.0f;
+	this->on_the_ground = false;
 
 	Movement::calc_r(dt);
 	rect.top = this->r;
@@ -128,9 +129,4 @@ void MovementY::check_v(float penalty, float dt)
 bool MovementY::is_on_the_ground(void) const
 {
 	return this->on_the_ground;
-}
-
-void MovementY::set_on_the_ground(bool state)
-{
-	this->on_the_ground = state;
 }

@@ -40,7 +40,7 @@ void TurtixGame::start(void)
 		}
 		if (clock.getElapsedTime().asMilliseconds() >= LOOP_TIME_MS) {
 			clock.restart();
-			this->turtix->move(&key, LOOP_TIME_MS);
+			this->turtix->move(key, LOOP_TIME_MS);
 			this->move_view();
 			this->map.update_background_sprite(this->map.find_center_frame(this->view));
 			this->key.last_up_pressed = this->key.up_pressed;

@@ -45,7 +45,7 @@ void Turtix::draw(void)
 	this->window->draw(this->turtixSprite);
 }
 
-void Turtix::move(const Key* key, float dt)
+void Turtix::move(const Key& key, float dt)
 {
 	sf::FloatRect turtixRect = this->get_rect();
 
@@ -53,9 +53,9 @@ void Turtix::move(const Key* key, float dt)
 	this->move_y(turtixRect, key, dt);
 }
 
-void Turtix::move_x(sf::FloatRect& turtixRect, const Key* key, float dt)
+void Turtix::move_x(sf::FloatRect& turtixRect, const Key& key, float dt)
 {
-	if (key->right_pressed) {
+	if (key.right_pressed) {
 		if (this->movement_x->get_v() == 0.0f) {
 			this->movement_x->set_v(INITIAL_SPEED);
 		} else if (this->movement_x->get_v() > 0.0f) {
@@ -63,7 +63,7 @@ void Turtix::move_x(sf::FloatRect& turtixRect, const Key* key, float dt)
 		} else {
 			this->movement_x->set_a(X_DECELERATION);
 		}
-	} else if (key->left_pressed) {
+	} else if (key.left_pressed) {
 		if (this->movement_x->get_v() ==  0.0f) {
 			this->movement_x->set_v(-INITIAL_SPEED);
 		} else if (this->movement_x->get_v() < 0.0f) {
@@ -71,7 +71,7 @@ void Turtix::move_x(sf::FloatRect& turtixRect, const Key* key, float dt)
 		} else {
 			this->movement_x->set_a(-X_DECELERATION);
 		}
-	} else if (!key->right_pressed && !key->left_pressed) {
+	} else if (!key.right_pressed && !key.left_pressed) {
 		if (this->movement_x->get_v() > SPEED_STEP) {
 			this->movement_x->set_a(-X_DECELERATION);
 		} else if (this->movement_x->get_v() < -SPEED_STEP) {
@@ -84,11 +84,10 @@ void Turtix::move_x(sf::FloatRect& turtixRect, const Key* key, float dt)
 	this->movement_x->calc_x(turtixRect, dt);
 }
 
-void Turtix::move_y(sf::FloatRect& turtixRect, const Key* key, float dt)
+void Turtix::move_y(sf::FloatRect& turtixRect, const Key& key, float dt)
 {
-	if (key->up_pressed && !key->last_up_pressed && this->movement_y->is_on_the_ground()) {
+	if (key.up_pressed && !key.last_up_pressed && this->movement_y->is_on_the_ground()) {
 		this->movement_y->set_v(-JUMP_SPEED);
-		this->movement_y->set_on_the_ground(false);
 	}
 	this->movement_y->calc_y(turtixRect, dt);
 }
