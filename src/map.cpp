@@ -88,70 +88,49 @@ void Map::init_background_sprite(const sf::Vector2i& center_pos)
 
 void Map::update_background_sprite(const sf::Vector2i& center_pos)
 {
-	if (center_pos.x > last_center_pos.x) {
-		this->update_right_frames(center_pos.x);
-	} else if (center_pos.x < last_center_pos.x) {
-		this->update_left_frames(center_pos.x);
+	int shift;
+
+	if (center_pos.x != this->last_center_pos.x) {
+		shift = center_pos.x - this->last_center_pos.x;
+		this->update_right_left_frames(center_pos.x, shift);
+		this->last_center_pos.x = center_pos.x;
 	}
-	this->last_center_pos.x = center_pos.x;
-	if (center_pos.y > last_center_pos.y) {
-		this->update_bottom_frames(center_pos.y);
-	} else if (center_pos.y < last_center_pos.y) {
-		this->update_top_frames(center_pos.y);
+	if (center_pos.y != this->last_center_pos.y) {
+		shift = center_pos.y - this->last_center_pos.y;
+		this->update_top_bottom_frames(center_pos.y, shift);
+		this->last_center_pos.y = center_pos.y;
 	}
-	this->last_center_pos.y = center_pos.y;
 }
 
-void Map::update_right_frames(int pos_x)
+void Map::update_right_left_frames(int pos_x, int shift_x)
 {
 	for (int y = -1; y <= HEIGHT_FRAMES; y++) {
 		sf::Vector2i new_frame_pos(
-			pos_x + WIDTH_FRAMES / 2 + 1,
+			pos_x + GET_SIGN(shift_x) * WIDTH_FRAMES / 2 + shift_x,
 			this->last_center_pos.y + y - HEIGHT_FRAMES / 2
 		);
-		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x, this->top_left_frame.y + y + 1);
+		sf::Vector2i curr_frame_pos = check_frame_pos(this->get_first_corner_frame(this->top_left_frame.x, shift_x), this->top_left_frame.y + y + 1);
 		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
 	}
-	this->top_left_frame = check_frame_pos(this->top_left_frame.x + 1, this->top_left_frame.y);
+	this->top_left_frame = check_frame_pos(this->top_left_frame.x + shift_x, this->top_left_frame.y);
 }
 
-void Map::update_left_frames(int pos_x)
-{
-	for (int y = -1; y <= HEIGHT_FRAMES; y++) {
-		sf::Vector2i new_frame_pos(
-			pos_x - WIDTH_FRAMES / 2 - 1,
-			this->last_center_pos.y + y - HEIGHT_FRAMES / 2
-		);
-		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + WIDTH_FRAMES + 1, this->top_left_frame.y + y + 1);
-		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
-	}
-	this->top_left_frame = check_frame_pos(this->top_left_frame.x - 1, this->top_left_frame.y);
-}
-
-void Map::update_bottom_frames(int pos_y)
+void Map::update_top_bottom_frames(int pos_y, int shift_y)
 {
 	for (int x = -1; x <= WIDTH_FRAMES; x++) {
 		sf::Vector2i new_frame_pos(
 			this->last_center_pos.x + x - WIDTH_FRAMES / 2,
-			pos_y + HEIGHT_FRAMES / 2 + 1
+			pos_y + GET_SIGN(shift_y) * HEIGHT_FRAMES / 2 + shift_y
 		);
-		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + x + 1, this->top_left_frame.y);
+		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + x + 1, this->get_first_corner_frame(this->top_left_frame.y, shift_y));
 		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
 	}
-	this->top_left_frame = check_frame_pos(this->top_left_frame.x, this->top_left_frame.y + 1);
+	this->top_left_frame = check_frame_pos(this->top_left_frame.x, this->top_left_frame.y + shift_y);
 }
 
-void Map::update_top_frames(int pos_y)
+int Map::get_first_corner_frame(int frame_pos, int shift) const
 {
-	for (int x = -1; x <= WIDTH_FRAMES; x++) {
-		sf::Vector2i new_frame_pos(
-			this->last_center_pos.x + x - WIDTH_FRAMES / 2,
-			pos_y - HEIGHT_FRAMES / 2 - 1
-		);
-		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + x + 1, this->top_left_frame.y + HEIGHT_FRAMES + 1);
-		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
-	}
-	this->top_left_frame = check_frame_pos(this->top_left_frame.x, this->top_left_frame.y - 1);
+	return (shift <= 0) ? frame_pos + shift : frame_pos + shift - 1;
 }
 
 void Map::update_frame_sprite(const sf::Vector2i& frame_pos, const sf::Vector2i& perv_frame_pos)
@@ -211,7 +190,7 @@ sf::Vector2i Map::find_init_frame(void)
 					y - HEIGHT_FRAMES / 2 - HEIGHT_OFFSET_FRAME
 				};
 				init_frame_pos = { x, y };
-				return init_frame_pos - map_margin;
+				return init_frame_pos - this->map_margin;
 			}
 		}
 	}

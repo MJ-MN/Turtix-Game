@@ -3,6 +3,7 @@
 
 #define ONE_SECOND_MS 1000.0f
 #define LOOP_TIME_MS 50
+#define GET_SIGN(x) ((x < 0) ? -1 : 1)
 
 enum Direction {
 	UP,
