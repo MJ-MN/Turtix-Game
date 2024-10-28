@@ -10,8 +10,8 @@
 #include "turtix.hpp"
 #include "manual.hpp"
 
-#define WINDOW_WIDTH (MAP_SCALE * WIDTH_FRAMES * FRAME_SIZE)
-#define WINDOW_HEIGHT (MAP_SCALE * HEIGHT_FRAMES * FRAME_SIZE)
+#define WINDOW_WIDTH (MAP_WIDTH_FRAMES * MAP_SCALED_FRAME_SIZE)
+#define WINDOW_HEIGHT (MAP_HEIGHT_FRAMES * MAP_SCALED_FRAME_SIZE)
 #define SKY_BLUE_COLOR sf::Color(135, 206, 235)
 
 const std::string GAME_HEADER_NAME = "Turtix";

@@ -5,16 +5,15 @@
 
 #include "manual.hpp"
 
-#define IMAGE_WIDTH_FRAME 10
-#define IMAGE_HEIGHT_FRAME 10
-#define FRAME_SIZE 102
-#define WIDTH_FRAMES 7
-#define HEIGHT_FRAMES 5
-#define POINTS_IN_FRAME 6
+#define MAP_IMAGE_WIDTH_FRAMES 10
+#define MAP_IMAGE_HEIGHT_FRAMES 10
+#define MAP_FRAME_SIZE 102
+#define MAP_WIDTH_FRAMES 7
+#define MAP_HEIGHT_FRAMES 5
 #define MAP_SCALE 2
-#define SCALED_FRAME_SIZE (MAP_SCALE * FRAME_SIZE)
-#define INIT_FRAME 39
-#define HEIGHT_OFFSET_FRAME 1
+#define MAP_SCALED_FRAME_SIZE (MAP_SCALE * MAP_FRAME_SIZE)
+#define MAP_INIT_FRAME 39
+#define MAP_HEIGHT_OFFSET_FRAME 1
 
 enum Solidity {
 	TOP_LEFT = 0x01,
@@ -38,10 +37,10 @@ private:
 	sf::Texture bgTexture;
 	sf::View* view;
 
-	void load_background_frame_numbers(void);
+	void load_frames_number(void);
 	void load_frames_solidity(void);
 	sf::Vector2i find_init_frame(void);
-	void load_background_texture(void);
+	void load_texture(void);
 	void update_frame_sprite(const sf::Vector2i& frame_pos, const sf::Vector2i& perv_frame_pos);
 	void update_right_left_frames(int pos_x, int shift_x);
 	void update_top_bottom_frames(int pos_y, int shift_y);
@@ -54,8 +53,8 @@ public:
 	virtual ~Map();
 	sf::Vector2i get_size(void) const;
 	sf::Vector2i get_margin_size(void) const;
-	void init_background_sprite(const sf::Vector2i& center_pos);
-	void update_background_sprite(const sf::Vector2i& center_pos);
+	void init_frames_sprite(const sf::Vector2i& center_pos);
+	void update_frames_sprite(const sf::Vector2i& center_pos);
 	sf::Vector2i find_center_frame(const sf::View* view) const;
 	float is_valid_x(const sf::FloatRect& turtixRect, float v_x);
 	float is_valid_y(const sf::FloatRect& turtixRect, float v_y);

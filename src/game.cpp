@@ -16,7 +16,7 @@ TurtixGame::TurtixGame()
 	this->window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), GAME_HEADER_NAME);
 	this->window->setFramerateLimit(120);
 	this->view = new sf::View(sf::FloatRect(0.0f, 0.0f, WINDOW_WIDTH, WINDOW_HEIGHT));
-	this->map.setScale(sf::Vector2f(MAP_SCALE, MAP_SCALE));
+	this->map.setScale(MAP_SCALE, MAP_SCALE);
 	this->turtix = new Turtix(this->window, &this->map);
 }
 
@@ -41,13 +41,14 @@ void TurtixGame::start(void)
 		if (clock.getElapsedTime().asMilliseconds() >= LOOP_TIME_MS) {
 			clock.restart();
 			this->turtix->move(key, LOOP_TIME_MS);
+			this->turtix->update_frame_sprite();
 			this->move_view();
-			this->map.update_background_sprite(this->map.find_center_frame(this->view));
+			this->map.update_frames_sprite(this->map.find_center_frame(this->view));
 			this->key.last_up_pressed = this->key.up_pressed;
 		}
 		this->window->setView(*this->view);
 		this->window->draw(this->map);
-		this->turtix->draw();
+		this->window->draw(*this->turtix);
 		this->window->display();
 	}
 }
@@ -82,31 +83,28 @@ void TurtixGame::handle_event(const sf::Event& event)
 void TurtixGame::move_view(void)
 {
 	sf::Vector2f view_center_pos = this->view->getCenter();
-	sf::Vector2f diff_pos = {
-		this->turtix->get_center_pos().x - view_center_pos.x,
-		this->turtix->get_center_pos().y - view_center_pos.y
-	};
+	sf::Vector2f diff_pos = this->turtix->get_center_pos() - view_center_pos;
 
-	if (diff_pos.x > 1.0f * SCALED_FRAME_SIZE) {
-		view_center_pos.x += (diff_pos.x - 1.0f * SCALED_FRAME_SIZE);
-	} else if (diff_pos.x < -1.0f * SCALED_FRAME_SIZE) {
-		view_center_pos.x += (diff_pos.x + 1.0f * SCALED_FRAME_SIZE);
+	if (diff_pos.x > 1.0f * MAP_SCALED_FRAME_SIZE) {
+		view_center_pos.x += (diff_pos.x - 1.0f * MAP_SCALED_FRAME_SIZE);
+	} else if (diff_pos.x < -1.0f * MAP_SCALED_FRAME_SIZE) {
+		view_center_pos.x += (diff_pos.x + 1.0f * MAP_SCALED_FRAME_SIZE);
 	}
-	if (view_center_pos.x + WIDTH_FRAMES / 2.0f * SCALED_FRAME_SIZE > (this->map.get_size().x - this->map.get_margin_size().x - 1) * SCALED_FRAME_SIZE) {
-		view_center_pos.x = (this->map.get_size().x - this->map.get_margin_size().x- 1 - WIDTH_FRAMES / 2.0f) * SCALED_FRAME_SIZE;
-	} else if (view_center_pos.x - WIDTH_FRAMES / 2.0f * SCALED_FRAME_SIZE < (-this->map.get_margin_size().x + 1) * SCALED_FRAME_SIZE) {
-		view_center_pos.x = (WIDTH_FRAMES / 2.0f - this->map.get_margin_size().x + 1) * SCALED_FRAME_SIZE;
+	if (view_center_pos.x + MAP_WIDTH_FRAMES / 2.0f * MAP_SCALED_FRAME_SIZE > (this->map.get_size().x - this->map.get_margin_size().x - 1) * MAP_SCALED_FRAME_SIZE) {
+		view_center_pos.x = (this->map.get_size().x - this->map.get_margin_size().x- 1 - MAP_WIDTH_FRAMES / 2.0f) * MAP_SCALED_FRAME_SIZE;
+	} else if (view_center_pos.x - MAP_WIDTH_FRAMES / 2.0f * MAP_SCALED_FRAME_SIZE < (-this->map.get_margin_size().x + 1) * MAP_SCALED_FRAME_SIZE) {
+		view_center_pos.x = (MAP_WIDTH_FRAMES / 2.0f - this->map.get_margin_size().x + 1) * MAP_SCALED_FRAME_SIZE;
 	}
 
-	if (diff_pos.y > 1.0f * SCALED_FRAME_SIZE) {
-		view_center_pos.y += (diff_pos.y - 1.0f * SCALED_FRAME_SIZE);
-	} else if (diff_pos.y < -1.0f * SCALED_FRAME_SIZE) {
-		view_center_pos.y += (diff_pos.y + 1.0f * SCALED_FRAME_SIZE);
+	if (diff_pos.y > 1.0f * MAP_SCALED_FRAME_SIZE) {
+		view_center_pos.y += (diff_pos.y - 1.0f * MAP_SCALED_FRAME_SIZE);
+	} else if (diff_pos.y < -1.0f * MAP_SCALED_FRAME_SIZE) {
+		view_center_pos.y += (diff_pos.y + 1.0f * MAP_SCALED_FRAME_SIZE);
 	}
-	if (view_center_pos.y + HEIGHT_FRAMES / 2.0f * SCALED_FRAME_SIZE > (this->map.get_size().y - this->map.get_margin_size().y - 1) * SCALED_FRAME_SIZE) {
-		view_center_pos.y = (this->map.get_size().y - this->map.get_margin_size().y - 1 - HEIGHT_FRAMES / 2.0f) * SCALED_FRAME_SIZE;
-	} else if (view_center_pos.y - HEIGHT_FRAMES / 2.0f * SCALED_FRAME_SIZE < (-this->map.get_margin_size().y + 1) * SCALED_FRAME_SIZE) {
-		view_center_pos.y = (HEIGHT_FRAMES / 2.0f - this->map.get_margin_size().y + 1) * SCALED_FRAME_SIZE;
+	if (view_center_pos.y + MAP_HEIGHT_FRAMES / 2.0f * MAP_SCALED_FRAME_SIZE > (this->map.get_size().y - this->map.get_margin_size().y - 1) * MAP_SCALED_FRAME_SIZE) {
+		view_center_pos.y = (this->map.get_size().y - this->map.get_margin_size().y - 1 - MAP_HEIGHT_FRAMES / 2.0f) * MAP_SCALED_FRAME_SIZE;
+	} else if (view_center_pos.y - MAP_HEIGHT_FRAMES / 2.0f * MAP_SCALED_FRAME_SIZE < (-this->map.get_margin_size().y + 1) * MAP_SCALED_FRAME_SIZE) {
+		view_center_pos.y = (MAP_HEIGHT_FRAMES / 2.0f - this->map.get_margin_size().y + 1) * MAP_SCALED_FRAME_SIZE;
 	}
 	this->view->setCenter(view_center_pos);
 }

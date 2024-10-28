@@ -9,11 +9,11 @@ using namespace std;
 Map::Map()
 {
 	this->bgVertices.setPrimitiveType(sf::Triangles);
-	this->bgVertices.resize((WIDTH_FRAMES + 2) * (HEIGHT_FRAMES + 2) * POINTS_IN_FRAME);
-	this->load_background_frame_numbers();
+	this->bgVertices.resize((MAP_WIDTH_FRAMES + 2) * (MAP_HEIGHT_FRAMES + 2) * POINTS_IN_FRAME);
+	this->load_frames_number();
 	this->load_frames_solidity();
-	this->load_background_texture();
-	this->init_background_sprite(this->find_init_frame());
+	this->load_texture();
+	this->init_frames_sprite(this->find_init_frame());
 }
 
 Map::~Map()
@@ -34,7 +34,7 @@ sf::Vector2i Map::get_margin_size(void) const
 	return this->map_margin;
 }
 
-void Map::load_background_frame_numbers(void)
+void Map::load_frames_number(void)
 {
 	string line;
 	int frame_number;
@@ -65,20 +65,20 @@ void Map::load_frames_solidity(void)
 	solidityFile.close();
 }
 
-void Map::load_background_texture(void)
+void Map::load_texture(void)
 {
 	if (!this->bgTexture.loadFromFile(BACKGROUND_IMAGE_FILE)) {
 		cerr << "Failed to load " << BACKGROUND_IMAGE_FILE << "!" << endl;
 	}
 }
 
-void Map::init_background_sprite(const sf::Vector2i& center_pos)
+void Map::init_frames_sprite(const sf::Vector2i& center_pos)
 {
 
-	for (int y = -1; y <= HEIGHT_FRAMES; y++) {
-		for (int x = -1; x <= WIDTH_FRAMES; x++) {
-			sf::Vector2i frame_pos(center_pos.x + x - WIDTH_FRAMES / 2,
-				center_pos.y + y - HEIGHT_FRAMES / 2);
+	for (int y = -1; y <= MAP_HEIGHT_FRAMES; y++) {
+		for (int x = -1; x <= MAP_WIDTH_FRAMES; x++) {
+			sf::Vector2i frame_pos(center_pos.x + x - MAP_WIDTH_FRAMES / 2,
+				center_pos.y + y - MAP_HEIGHT_FRAMES / 2);
 			this->update_frame_sprite(frame_pos, sf::Vector2i(x, y));
 		}
 	}
@@ -86,7 +86,7 @@ void Map::init_background_sprite(const sf::Vector2i& center_pos)
 	this->last_center_pos = center_pos;
 }
 
-void Map::update_background_sprite(const sf::Vector2i& center_pos)
+void Map::update_frames_sprite(const sf::Vector2i& center_pos)
 {
 	int shift;
 
@@ -104,10 +104,10 @@ void Map::update_background_sprite(const sf::Vector2i& center_pos)
 
 void Map::update_right_left_frames(int pos_x, int shift_x)
 {
-	for (int y = -1; y <= HEIGHT_FRAMES; y++) {
+	for (int y = -1; y <= MAP_HEIGHT_FRAMES; y++) {
 		sf::Vector2i new_frame_pos(
-			pos_x + GET_SIGN(shift_x) * WIDTH_FRAMES / 2 + shift_x,
-			this->last_center_pos.y + y - HEIGHT_FRAMES / 2
+			pos_x + GET_SIGN(shift_x) * MAP_WIDTH_FRAMES / 2 + shift_x,
+			this->last_center_pos.y + y - MAP_HEIGHT_FRAMES / 2
 		);
 		sf::Vector2i curr_frame_pos = check_frame_pos(this->get_first_corner_frame(this->top_left_frame.x, shift_x), this->top_left_frame.y + y + 1);
 		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
@@ -117,10 +117,10 @@ void Map::update_right_left_frames(int pos_x, int shift_x)
 
 void Map::update_top_bottom_frames(int pos_y, int shift_y)
 {
-	for (int x = -1; x <= WIDTH_FRAMES; x++) {
+	for (int x = -1; x <= MAP_WIDTH_FRAMES; x++) {
 		sf::Vector2i new_frame_pos(
-			this->last_center_pos.x + x - WIDTH_FRAMES / 2,
-			pos_y + GET_SIGN(shift_y) * HEIGHT_FRAMES / 2 + shift_y
+			this->last_center_pos.x + x - MAP_WIDTH_FRAMES / 2,
+			pos_y + GET_SIGN(shift_y) * MAP_HEIGHT_FRAMES / 2 + shift_y
 		);
 		sf::Vector2i curr_frame_pos = check_frame_pos(this->top_left_frame.x + x + 1, this->get_first_corner_frame(this->top_left_frame.y, shift_y));
 		this->update_frame_sprite(new_frame_pos, curr_frame_pos);
@@ -136,23 +136,23 @@ int Map::get_first_corner_frame(int frame_pos, int shift) const
 void Map::update_frame_sprite(const sf::Vector2i& frame_pos, const sf::Vector2i& perv_frame_pos)
 {
 	int frame_number = get_frame_number(frame_pos);
-	sf::Vertex* squares = &(this->bgVertices[((perv_frame_pos.x + 1) + (perv_frame_pos.y + 1) * (WIDTH_FRAMES + 2)) * POINTS_IN_FRAME]);
+	sf::Vertex* squares = &(this->bgVertices[((perv_frame_pos.x + 1) + (perv_frame_pos.y + 1) * (MAP_WIDTH_FRAMES + 2)) * POINTS_IN_FRAME]);
 
-	squares[0].position = sf::Vector2f(frame_pos.x * FRAME_SIZE, frame_pos.y * FRAME_SIZE);
-	squares[1].position = squares[4].position = sf::Vector2f(frame_pos.x * FRAME_SIZE, (frame_pos.y + 1) * FRAME_SIZE);
-	squares[2].position = squares[3].position = sf::Vector2f((frame_pos.x + 1) * FRAME_SIZE, frame_pos.y * FRAME_SIZE);
-	squares[5].position = sf::Vector2f((frame_pos.x + 1) * FRAME_SIZE, (frame_pos.y + 1) * FRAME_SIZE);
+	squares[0].position = sf::Vector2f(frame_pos.x * MAP_FRAME_SIZE, frame_pos.y * MAP_FRAME_SIZE);
+	squares[1].position = squares[4].position = sf::Vector2f(frame_pos.x * MAP_FRAME_SIZE, (frame_pos.y + 1) * MAP_FRAME_SIZE);
+	squares[2].position = squares[3].position = sf::Vector2f((frame_pos.x + 1) * MAP_FRAME_SIZE, frame_pos.y * MAP_FRAME_SIZE);
+	squares[5].position = sf::Vector2f((frame_pos.x + 1) * MAP_FRAME_SIZE, (frame_pos.y + 1) * MAP_FRAME_SIZE);
 	if (frame_number != -1) {
-		sf::Vector2i tile_frame_pos(frame_number % 10, frame_number / 10);
-		squares[0].texCoords = sf::Vector2f(tile_frame_pos.x * FRAME_SIZE, tile_frame_pos.y * FRAME_SIZE);
-		squares[1].texCoords = squares[4].texCoords = sf::Vector2f(tile_frame_pos.x * FRAME_SIZE, (tile_frame_pos.y + 1) * FRAME_SIZE);
-		squares[2].texCoords = squares[3].texCoords = sf::Vector2f((tile_frame_pos.x + 1) * FRAME_SIZE, tile_frame_pos.y * FRAME_SIZE);
-		squares[5].texCoords = sf::Vector2f((tile_frame_pos.x + 1) * FRAME_SIZE, (tile_frame_pos.y + 1) * FRAME_SIZE);
+		sf::Vector2i tile_frame_pos(frame_number % MAP_IMAGE_WIDTH_FRAMES, frame_number / MAP_IMAGE_WIDTH_FRAMES);
+		squares[0].texCoords = sf::Vector2f(tile_frame_pos.x * MAP_FRAME_SIZE, tile_frame_pos.y * MAP_FRAME_SIZE);
+		squares[1].texCoords = squares[4].texCoords = sf::Vector2f(tile_frame_pos.x * MAP_FRAME_SIZE, (tile_frame_pos.y + 1) * MAP_FRAME_SIZE);
+		squares[2].texCoords = squares[3].texCoords = sf::Vector2f((tile_frame_pos.x + 1) * MAP_FRAME_SIZE, tile_frame_pos.y * MAP_FRAME_SIZE);
+		squares[5].texCoords = sf::Vector2f((tile_frame_pos.x + 1) * MAP_FRAME_SIZE, (tile_frame_pos.y + 1) * MAP_FRAME_SIZE);
 	} else {
-		squares[0].texCoords = sf::Vector2f((IMAGE_WIDTH_FRAME - 1) * FRAME_SIZE, (IMAGE_HEIGHT_FRAME - 1) * FRAME_SIZE);
-		squares[1].texCoords = squares[4].texCoords = sf::Vector2f((IMAGE_WIDTH_FRAME - 1) * FRAME_SIZE, IMAGE_HEIGHT_FRAME * FRAME_SIZE);
-		squares[2].texCoords = squares[3].texCoords = sf::Vector2f(IMAGE_WIDTH_FRAME * FRAME_SIZE, (IMAGE_HEIGHT_FRAME - 1) * FRAME_SIZE);
-		squares[5].texCoords = sf::Vector2f(IMAGE_WIDTH_FRAME * FRAME_SIZE, IMAGE_HEIGHT_FRAME * FRAME_SIZE);
+		squares[0].texCoords = sf::Vector2f((MAP_IMAGE_WIDTH_FRAMES - 1) * MAP_FRAME_SIZE, (MAP_IMAGE_HEIGHT_FRAMES - 1) * MAP_FRAME_SIZE);
+		squares[1].texCoords = squares[4].texCoords = sf::Vector2f((MAP_IMAGE_WIDTH_FRAMES - 1) * MAP_FRAME_SIZE, MAP_IMAGE_HEIGHT_FRAMES * MAP_FRAME_SIZE);
+		squares[2].texCoords = squares[3].texCoords = sf::Vector2f(MAP_IMAGE_WIDTH_FRAMES * MAP_FRAME_SIZE, (MAP_IMAGE_HEIGHT_FRAMES - 1) * MAP_FRAME_SIZE);
+		squares[5].texCoords = sf::Vector2f(MAP_IMAGE_WIDTH_FRAMES * MAP_FRAME_SIZE, MAP_IMAGE_HEIGHT_FRAMES * MAP_FRAME_SIZE);
 	}
 }
 
@@ -163,31 +163,31 @@ int Map::get_frame_number(const sf::Vector2i& frame_pos) const
 
 sf::Vector2i Map::check_frame_pos(int x, int y) const
 {
-	if (x > WIDTH_FRAMES) {
-		x -= (WIDTH_FRAMES + 2);
+	if (x > MAP_WIDTH_FRAMES) {
+		x -= (MAP_WIDTH_FRAMES + 2);
 	}
 	if (x < -1) {
-		x += (WIDTH_FRAMES + 2);
+		x += (MAP_WIDTH_FRAMES + 2);
 	}
-	if (y > HEIGHT_FRAMES) {
-		y -= (HEIGHT_FRAMES + 2);
+	if (y > MAP_HEIGHT_FRAMES) {
+		y -= (MAP_HEIGHT_FRAMES + 2);
 	}
 	if (y < -1) {
-		y += (HEIGHT_FRAMES + 2);
+		y += (MAP_HEIGHT_FRAMES + 2);
 	}
 	return sf::Vector2i(x, y);
 }
 
 sf::Vector2i Map::find_init_frame(void)
 {
-	sf::Vector2i init_frame_pos(WIDTH_FRAMES / 2, HEIGHT_FRAMES / 2);
+	sf::Vector2i init_frame_pos(MAP_WIDTH_FRAMES / 2, MAP_HEIGHT_FRAMES / 2);
 
 	for (int y = 0; y < this->bg_frame_numbers.size(); y++) {
 		for (int x = 0; x < this->bg_frame_numbers[y].size(); x++) {
-			if (this->bg_frame_numbers[y][x] == INIT_FRAME) {
+			if (this->bg_frame_numbers[y][x] == MAP_INIT_FRAME) {
 				this->map_margin = {
-					x - WIDTH_FRAMES / 2,
-					y - HEIGHT_FRAMES / 2 - HEIGHT_OFFSET_FRAME
+					x - MAP_WIDTH_FRAMES / 2,
+					y - MAP_HEIGHT_FRAMES / 2 - MAP_HEIGHT_OFFSET_FRAME
 				};
 				init_frame_pos = { x, y };
 				return init_frame_pos - this->map_margin;
@@ -201,8 +201,8 @@ sf::Vector2i Map::find_center_frame(const sf::View* view) const
 {
 	sf::Vector2f view_center_pos = view->getCenter();
 	sf::Vector2i center_frame_pos = {
-		(int)(view_center_pos.x / SCALED_FRAME_SIZE),
-		(int)(view_center_pos.y / SCALED_FRAME_SIZE)
+		(int)(view_center_pos.x / MAP_SCALED_FRAME_SIZE),
+		(int)(view_center_pos.y / MAP_SCALED_FRAME_SIZE)
 	};
 	return center_frame_pos;
 }
@@ -217,21 +217,21 @@ sf::FloatRect Map::get_solid_frame_rect(const sf::Vector2i& frame_pos, int solid
 		return sf::FloatRect(rect_pos, rect_size);
 	}
 	rect_size = {
-		SCALED_FRAME_SIZE * 0.6f,
-		SCALED_FRAME_SIZE * 0.6f
+		MAP_SCALED_FRAME_SIZE * 0.6f,
+		MAP_SCALED_FRAME_SIZE * 0.6f
 	};
 	switch (this->frames_solidity[frame_number] & solidity) {
 	case Solidity::TOP_LEFT:
-		rect_pos = { (float)frame_pos.x * SCALED_FRAME_SIZE, (float)frame_pos.y * SCALED_FRAME_SIZE };
+		rect_pos = { (float)frame_pos.x * MAP_SCALED_FRAME_SIZE, (float)frame_pos.y * MAP_SCALED_FRAME_SIZE };
 		break;
 	case Solidity::DOWN_LEFT:
-		rect_pos = { (float)frame_pos.x * SCALED_FRAME_SIZE, (frame_pos.y + 0.4f) * SCALED_FRAME_SIZE };
+		rect_pos = { (float)frame_pos.x * MAP_SCALED_FRAME_SIZE, (frame_pos.y + 0.4f) * MAP_SCALED_FRAME_SIZE };
 		break;
 	case Solidity::TOP_RIGHT:
-		rect_pos = { (frame_pos.x + 0.4f) * SCALED_FRAME_SIZE, (float)frame_pos.y * SCALED_FRAME_SIZE };
+		rect_pos = { (frame_pos.x + 0.4f) * MAP_SCALED_FRAME_SIZE, (float)frame_pos.y * MAP_SCALED_FRAME_SIZE };
 		break;
 	case Solidity::DOWN_RIGHT:
-		rect_pos = { (frame_pos.x + 0.4f) * SCALED_FRAME_SIZE, (frame_pos.y + 0.4f) * SCALED_FRAME_SIZE };
+		rect_pos = { (frame_pos.x + 0.4f) * MAP_SCALED_FRAME_SIZE, (frame_pos.y + 0.4f) * MAP_SCALED_FRAME_SIZE };
 		break;
 	}
 	return sf::FloatRect(rect_pos, rect_size);
@@ -242,10 +242,10 @@ float Map::is_valid_x(const sf::FloatRect& turtixRect, float v_x)
 	sf::FloatRect solidFrameRect;
 	float penalty_x = 0.0f;
 	sf::Vector2i frame_pos[4] = {
-		{(int)turtixRect.left / SCALED_FRAME_SIZE, (int)turtixRect.top / SCALED_FRAME_SIZE},
-		{(int)turtixRect.left / SCALED_FRAME_SIZE , (int)(turtixRect.top + turtixRect.height) / SCALED_FRAME_SIZE},
-		{(int)(turtixRect.left + turtixRect.width) / SCALED_FRAME_SIZE, (int)turtixRect.top / SCALED_FRAME_SIZE},
-		{(int)(turtixRect.left + turtixRect.width) / SCALED_FRAME_SIZE, (int)(turtixRect.top + turtixRect.height) / SCALED_FRAME_SIZE}
+		{(int)turtixRect.left / MAP_SCALED_FRAME_SIZE, (int)turtixRect.top / MAP_SCALED_FRAME_SIZE},
+		{(int)turtixRect.left / MAP_SCALED_FRAME_SIZE , (int)(turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE},
+		{(int)(turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE, (int)turtixRect.top / MAP_SCALED_FRAME_SIZE},
+		{(int)(turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE, (int)(turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE}
 	};
 
 	for (int i = 0; i < 4; i++) {
@@ -278,10 +278,10 @@ float Map::is_valid_y(const sf::FloatRect& turtixRect, float v_y)
 	sf::FloatRect solidFrameRect;
 	float penalty_y = 0.0f;
 	sf::Vector2i frame_pos[4] = {
-		{(int)turtixRect.left / SCALED_FRAME_SIZE, (int)turtixRect.top / SCALED_FRAME_SIZE},
-		{(int)turtixRect.left / SCALED_FRAME_SIZE, (int)(turtixRect.top + turtixRect.height) / SCALED_FRAME_SIZE},
-		{(int)(turtixRect.left + turtixRect.width) / SCALED_FRAME_SIZE, (int)turtixRect.top / SCALED_FRAME_SIZE},
-		{(int)(turtixRect.left + turtixRect.width) / SCALED_FRAME_SIZE, (int)(turtixRect.top + turtixRect.height) / SCALED_FRAME_SIZE}
+		{(int)turtixRect.left / MAP_SCALED_FRAME_SIZE, (int)turtixRect.top / MAP_SCALED_FRAME_SIZE},
+		{(int)turtixRect.left / MAP_SCALED_FRAME_SIZE, (int)(turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE},
+		{(int)(turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE, (int)turtixRect.top / MAP_SCALED_FRAME_SIZE},
+		{(int)(turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE, (int)(turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE}
 	};
 
 	for (int i = 0; i < 4; i++) {
