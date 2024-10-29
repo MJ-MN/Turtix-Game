@@ -15,6 +15,7 @@
 #define SKY_BLUE_COLOR sf::Color(135, 206, 235)
 
 const std::string GAME_HEADER_NAME = "Turtix";
+const std::string MUSIC_FILE = "./Level1.ogg";
 
 class TurtixGame {
 private:
@@ -23,10 +24,12 @@ private:
 	Map map;
 	sf::RenderWindow* window;
 	sf::View* view;
+	sf::Music music;
 	Turtix* turtix;
 
 	void handle_event(const sf::Event& event);
 	void move_view(void);
+	void load_music(void);
 public:
 	TurtixGame();
 	virtual ~TurtixGame();

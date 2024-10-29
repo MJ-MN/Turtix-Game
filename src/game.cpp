@@ -16,12 +16,14 @@ TurtixGame::TurtixGame()
 	this->window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), GAME_HEADER_NAME);
 	this->window->setFramerateLimit(120);
 	this->view = new sf::View(sf::FloatRect(0.0f, 0.0f, WINDOW_WIDTH, WINDOW_HEIGHT));
+	this->load_music();
 	this->map.setScale(MAP_SCALE, MAP_SCALE);
 	this->turtix = new Turtix(this->window, &this->map);
 }
 
 TurtixGame::~TurtixGame()
 {
+	this->music.stop();
 	this->window->close();
 	delete this->turtix;
 	delete this->view;
@@ -107,4 +109,14 @@ void TurtixGame::move_view(void)
 		view_center_pos.y = (MAP_HEIGHT_FRAMES / 2.0f - this->map.get_margin_size().y + 1) * MAP_SCALED_FRAME_SIZE;
 	}
 	this->view->setCenter(view_center_pos);
+}
+
+void TurtixGame::load_music(void)
+{
+	if (!this->music.openFromFile(MUSIC_FILE)) {
+		cerr << "Failed to load " << MUSIC_FILE << "!" << endl;
+	}
+	this->music.setVolume(20.0f);
+	this->music.play();
+	this->music.setLoop(true);
 }
