@@ -242,10 +242,10 @@ float Map::is_valid_x(const sf::FloatRect& turtixRect, float v_x)
 	sf::FloatRect solidFrameRect;
 	float penalty_x = 0.0f;
 	sf::Vector2i frame_pos[4] = {
-		{(int)turtixRect.left / MAP_SCALED_FRAME_SIZE, (int)turtixRect.top / MAP_SCALED_FRAME_SIZE},
-		{(int)turtixRect.left / MAP_SCALED_FRAME_SIZE , (int)(turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE},
-		{(int)(turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE, (int)turtixRect.top / MAP_SCALED_FRAME_SIZE},
-		{(int)(turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE, (int)(turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE}
+		{(int)(turtixRect.left / MAP_SCALED_FRAME_SIZE), (int)(turtixRect.top / MAP_SCALED_FRAME_SIZE)},
+		{(int)(turtixRect.left / MAP_SCALED_FRAME_SIZE) , (int)((turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE)},
+		{(int)((turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE), (int)(turtixRect.top / MAP_SCALED_FRAME_SIZE)},
+		{(int)((turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE), (int)((turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE)}
 	};
 
 	for (int i = 0; i < 4; i++) {
@@ -278,10 +278,10 @@ float Map::is_valid_y(const sf::FloatRect& turtixRect, float v_y)
 	sf::FloatRect solidFrameRect;
 	float penalty_y = 0.0f;
 	sf::Vector2i frame_pos[4] = {
-		{(int)turtixRect.left / MAP_SCALED_FRAME_SIZE, (int)turtixRect.top / MAP_SCALED_FRAME_SIZE},
-		{(int)turtixRect.left / MAP_SCALED_FRAME_SIZE, (int)(turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE},
-		{(int)(turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE, (int)turtixRect.top / MAP_SCALED_FRAME_SIZE},
-		{(int)(turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE, (int)(turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE}
+		{(int)(turtixRect.left / MAP_SCALED_FRAME_SIZE), (int)(turtixRect.top / MAP_SCALED_FRAME_SIZE)},
+		{(int)(turtixRect.left / MAP_SCALED_FRAME_SIZE), (int)((turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE)},
+		{(int)((turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE), (int)(turtixRect.top / MAP_SCALED_FRAME_SIZE)},
+		{(int)((turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE), (int)((turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE)}
 	};
 
 	for (int i = 0; i < 4; i++) {

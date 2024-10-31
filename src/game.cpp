@@ -17,6 +17,7 @@ TurtixGame::TurtixGame()
 	this->window->setFramerateLimit(120);
 	this->view = new sf::View(sf::FloatRect(0.0f, 0.0f, WINDOW_WIDTH, WINDOW_HEIGHT));
 	this->load_music();
+	this->load_icon();
 	this->map.setScale(MAP_SCALE, MAP_SCALE);
 	this->turtix = new Turtix(this->window, &this->map);
 }
@@ -119,4 +120,12 @@ void TurtixGame::load_music(void)
 	this->music.setVolume(20.0f);
 	this->music.play();
 	this->music.setLoop(true);
+}
+
+void TurtixGame::load_icon(void)
+{
+	if(!this->icon.loadFromFile(GAME_ICON_IMAGE)) {
+		cerr << "Failed to load " << GAME_ICON_IMAGE << "!" << endl;
+	}
+	this->window->setIcon(this->icon.getSize().x, this->icon.getSize().y, this->icon.getPixelsPtr());
 }

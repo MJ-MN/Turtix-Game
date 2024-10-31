@@ -16,6 +16,7 @@ Turtix::Turtix(sf::RenderWindow* _window, Map* _map)
 	this->movement_x = new MovementX(_map, turtixPos.x, 0.0f, X_ACCELERATION);
 	this->movement_y = new MovementY(_map, turtixPos.y, 0.0f, Y_ACCELERATION);
 	this->init_frame_sprite();
+	this->direction = Direction::RIGHT;
 }
 
 Turtix::Turtix()
@@ -35,6 +36,7 @@ Turtix::Turtix(const Turtix& turtix)
 	this->vertices = turtix.vertices;
 	this->textureLeft = turtix.textureLeft;
 	this->textureRight = turtix.textureRight;
+	this->textureUp = turtix.textureUp;
 	this->window = turtix.window;
 	this->movement_x = new MovementX();
 	this->movement_x = turtix.movement_x;
@@ -48,6 +50,7 @@ Turtix& Turtix::operator=(const Turtix& turtix)
 	this->vertices = turtix.vertices;
 	this->textureLeft = turtix.textureLeft;
 	this->textureRight = turtix.textureRight;
+	this->textureUp = turtix.textureUp;
 	this->window = turtix.window;
 	*this->movement_x = *turtix.movement_x;
 	*this->movement_y = *turtix.movement_y;
@@ -62,14 +65,17 @@ void Turtix::load_texture(void)
 	if (!this->textureRight.loadFromFile(TURTIX_RIGHT_IMAGE_FILE)) {
 		cerr << "Failed to load " << TURTIX_RIGHT_IMAGE_FILE << "!" << endl;
 	}
+	if (!this->textureUp.loadFromFile(TURTIX_UP_IMAGE_FILE)) {
+		cerr << "Failed to load " << TURTIX_UP_IMAGE_FILE << "!" << endl;
+	}
 }
 
 void Turtix::init_frame_sprite(void)
 {
 	this->vertices[0].texCoords = sf::Vector2f(0.0f, 0.0f);
-	this->vertices[1].texCoords = this->vertices[4].texCoords = sf::Vector2f(0.0f, TURTIX_FRAME_SIZE);
-	this->vertices[2].texCoords = this->vertices[3].texCoords = sf::Vector2f(TURTIX_FRAME_SIZE, 0.0f);
-	this->vertices[5].texCoords = sf::Vector2f(TURTIX_FRAME_SIZE, TURTIX_FRAME_SIZE);
+	this->vertices[1].texCoords = this->vertices[4].texCoords = sf::Vector2f(0.0f, TURTIX_IMAGE_FRAME_SIZE);
+	this->vertices[2].texCoords = this->vertices[3].texCoords = sf::Vector2f(TURTIX_IMAGE_FRAME_SIZE, 0.0f);
+	this->vertices[5].texCoords = sf::Vector2f(TURTIX_IMAGE_FRAME_SIZE, TURTIX_IMAGE_FRAME_SIZE);
 }
 
 sf::FloatRect Turtix::get_rect(void) const
@@ -77,8 +83,8 @@ sf::FloatRect Turtix::get_rect(void) const
 	sf::Vector2f center_pos = this->get_center_pos();
 
 	return sf::FloatRect(
-		center_pos.x - TURTIX_FRAME_SIZE_EFFECTIVE / 2.0f, center_pos.y - TURTIX_FRAME_SIZE_EFFECTIVE / 2.0f,
-		TURTIX_FRAME_SIZE_EFFECTIVE, TURTIX_FRAME_SIZE_EFFECTIVE
+		center_pos.x - TURTIX_SCALED_FRAME_SIZE_EFF / 2.0f, center_pos.y - TURTIX_SCALED_FRAME_SIZE_EFF / 2.0f,
+		TURTIX_SCALED_FRAME_SIZE_EFF, TURTIX_SCALED_FRAME_SIZE_EFF
 	);
 }
 
@@ -101,11 +107,11 @@ void Turtix::update_frame_sprite(void)
 		tile_frame_pos.y * TURTIX_IMAGE_FRAME_SIZE
 	);
 	this->vertices[1].texCoords = this->vertices[4].texCoords = this->vertices[0].texCoords +
-		sf::Vector2f(0.0f, TURTIX_FRAME_SIZE);
+		sf::Vector2f(0.0f, TURTIX_IMAGE_FRAME_SIZE);
 	this->vertices[2].texCoords = this->vertices[3].texCoords = this->vertices[0].texCoords +
-		sf::Vector2f(TURTIX_FRAME_SIZE, 0.0f);
+		sf::Vector2f(TURTIX_IMAGE_FRAME_SIZE, 0.0f);
 	this->vertices[5].texCoords = this->vertices[0].texCoords +
-		sf::Vector2f(TURTIX_FRAME_SIZE, TURTIX_FRAME_SIZE);
+		sf::Vector2f(TURTIX_IMAGE_FRAME_SIZE, TURTIX_IMAGE_FRAME_SIZE);
 }
 
 sf::Vector2f Turtix::get_center_pos(void) const
@@ -119,7 +125,7 @@ void Turtix::move(const Key& key, float dt)
 
 	this->move_x(turtixRect, key, dt);
 	this->move_y(turtixRect, key, dt);
-	this->vertices[0].position = sf::Vector2f(turtixRect.left - TRUTIX_FRAME_MARGIN / 2.0f, turtixRect.top - TRUTIX_FRAME_MARGIN / 2.0f);
+	this->vertices[0].position = sf::Vector2f(turtixRect.left - TRUTIX_SCALED_FRAME_MARGIN / 2.0f, turtixRect.top - TRUTIX_SCALED_FRAME_MARGIN / 2.0f);
 	this->vertices[1].position = this->vertices[4].position = this->vertices[0].position + sf::Vector2f(0.0f, TURTIX_SCALED_FRAME_SIZE);
 	this->vertices[2].position = this->vertices[3].position = this->vertices[0].position + sf::Vector2f(TURTIX_SCALED_FRAME_SIZE, 0.0f);
 	this->vertices[5].position = this->vertices[0].position + sf::Vector2f(TURTIX_SCALED_FRAME_SIZE, TURTIX_SCALED_FRAME_SIZE);
@@ -170,7 +176,9 @@ void Turtix::move_y(sf::FloatRect& turtixRect, const Key& key, float dt)
 
 void Turtix::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	if (this->direction == Direction::LEFT) {
+	if (this->direction == Direction::UP) {
+		states.texture = &this->textureUp;
+	} else if (this->direction == Direction::LEFT) {
 		states.texture = &this->textureLeft;
 	} else {
 		states.texture = &this->textureRight;

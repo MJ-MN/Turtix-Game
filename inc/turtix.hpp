@@ -11,14 +11,16 @@
 #define TURTIX_IMAGE_FRAMES 16
 #define TURTIX_IMAGE_WIDTH_FRAMES 5
 #define TURTIX_IMAGE_FRAME_SIZE 95
-#define TURTIX_FRAME_SIZE 81
-#define TRUTIX_FRAME_MARGIN 10
+#define TRUTIX_FRAME_MARGIN 25
+#define TURTIX_FRAME_SIZE_EFF (TURTIX_IMAGE_FRAME_SIZE - TRUTIX_FRAME_MARGIN)
 #define TURTIX_SCALE 1.5f
-#define TURTIX_SCALED_FRAME_SIZE (TURTIX_SCALE * TURTIX_FRAME_SIZE)
-#define TURTIX_FRAME_SIZE_EFFECTIVE (TURTIX_SCALED_FRAME_SIZE - TRUTIX_FRAME_MARGIN)
+#define TRUTIX_SCALED_FRAME_MARGIN (TURTIX_SCALE * TRUTIX_FRAME_MARGIN)
+#define TURTIX_SCALED_FRAME_SIZE (TURTIX_SCALE * TURTIX_IMAGE_FRAME_SIZE)
+#define TURTIX_SCALED_FRAME_SIZE_EFF (TURTIX_SCALE * TURTIX_FRAME_SIZE_EFF)
 
 const std::string TURTIX_LEFT_IMAGE_FILE = "./Sprite/turtix_left.png";
 const std::string TURTIX_RIGHT_IMAGE_FILE = "./Sprite/turtix_right.png";
+const std::string TURTIX_UP_IMAGE_FILE = "./Sprite/turtix_up.png";
 
 class Turtix : public sf::Drawable {
 private:
@@ -26,6 +28,7 @@ private:
 	sf::VertexArray vertices;
 	sf::Texture textureLeft;
 	sf::Texture textureRight;
+	sf::Texture textureUp;
 	sf::RenderWindow* window;
 	MovementX* movement_x;
 	MovementY* movement_y;
