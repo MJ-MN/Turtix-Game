@@ -18,6 +18,10 @@ const std::string GAME_HEADER_NAME = "Turtix";
 const std::string MUSIC_FILE = "./Level1.ogg";
 
 class TurtixGame {
+public:
+	TurtixGame();
+	virtual ~TurtixGame();
+	void start(void);
 private:
 	bool game_finished;
 	Key key;
@@ -30,10 +34,6 @@ private:
 	void handle_event(const sf::Event& event);
 	void move_view(void);
 	void load_music(void);
-public:
-	TurtixGame();
-	virtual ~TurtixGame();
-	void start(void);
 };
 
 #endif /* __GAME_HPP */

@@ -17,10 +17,11 @@ protected:
 	float r, v, a;
 
 	void calc_r(float dt);
-	virtual void check_v(float penalty, float dt) = 0;
+	virtual void check_v(float penalty, float dt);
 	void calc_v(float dt);
 public:
 	Movement(float _r, float _v, float _a);
+	Movement();
 	virtual ~Movement();
 	float get_r(void) const;
 	float get_v(void) const;
@@ -36,6 +37,7 @@ private:
 	void check_v(float penalty, float dt);
 public:
 	MovementX(Map* _map, float _r, float _v, float _a);
+	MovementX();
 	~MovementX();
 	void calc_x(sf::FloatRect& rect, float dt);
 };
@@ -48,6 +50,7 @@ private:
 	void check_v(float penalty, float dt);
 public:
 	MovementY(Map* _map, float _r, float _v, float _a);
+	MovementY();
 	~MovementY();
 	void calc_y(sf::FloatRect& rect, float dt);
 	bool is_on_the_ground(void) const;

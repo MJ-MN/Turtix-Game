@@ -35,12 +35,12 @@ private:
 	sf::Vector2i map_margin;
 	sf::VertexArray bgVertices;
 	sf::Texture bgTexture;
-	sf::View* view;
 
 	void load_frames_number(void);
 	void load_frames_solidity(void);
 	sf::Vector2i find_init_frame(void);
 	void load_texture(void);
+	sf::Vector2i find_center_frame(const sf::Vector2f center_pos) const;
 	void update_frame_sprite(const sf::Vector2i& frame_pos, const sf::Vector2i& perv_frame_pos);
 	void update_right_left_frames(int pos_x, int shift_x);
 	void update_top_bottom_frames(int pos_y, int shift_y);
@@ -54,8 +54,7 @@ public:
 	sf::Vector2i get_size(void) const;
 	sf::Vector2i get_margin_size(void) const;
 	void init_frames_sprite(const sf::Vector2i& center_pos);
-	void update_frames_sprite(const sf::Vector2i& center_pos);
-	sf::Vector2i find_center_frame(const sf::View* view) const;
+	void update_frames_sprite(const sf::Vector2f& center_pos);
 	float is_valid_x(const sf::FloatRect& turtixRect, float v_x);
 	float is_valid_y(const sf::FloatRect& turtixRect, float v_y);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const;

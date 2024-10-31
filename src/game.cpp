@@ -45,7 +45,7 @@ void TurtixGame::start(void)
 			this->turtix->move(key, LOOP_TIME_MS);
 			this->turtix->update_frame_sprite();
 			this->move_view();
-			this->map.update_frames_sprite(this->map.find_center_frame(this->view));
+			this->map.update_frames_sprite(this->view->getCenter());
 			this->key.last_up_pressed = this->key.up_pressed;
 		}
 		this->window->setView(*this->view);

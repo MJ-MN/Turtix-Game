@@ -86,19 +86,20 @@ void Map::init_frames_sprite(const sf::Vector2i& center_pos)
 	this->last_center_pos = center_pos;
 }
 
-void Map::update_frames_sprite(const sf::Vector2i& center_pos)
+void Map::update_frames_sprite(const sf::Vector2f& center_pos)
 {
 	int shift;
+	sf::Vector2i center_frame_pos = this->find_center_frame(center_pos);
 
-	if (center_pos.x != this->last_center_pos.x) {
-		shift = center_pos.x - this->last_center_pos.x;
-		this->update_right_left_frames(center_pos.x, shift);
-		this->last_center_pos.x = center_pos.x;
+	if (center_frame_pos.x != this->last_center_pos.x) {
+		shift = center_frame_pos.x - this->last_center_pos.x;
+		this->update_right_left_frames(center_frame_pos.x, shift);
+		this->last_center_pos.x = center_frame_pos.x;
 	}
-	if (center_pos.y != this->last_center_pos.y) {
-		shift = center_pos.y - this->last_center_pos.y;
-		this->update_top_bottom_frames(center_pos.y, shift);
-		this->last_center_pos.y = center_pos.y;
+	if (center_frame_pos.y != this->last_center_pos.y) {
+		shift = center_frame_pos.y - this->last_center_pos.y;
+		this->update_top_bottom_frames(center_frame_pos.y, shift);
+		this->last_center_pos.y = center_frame_pos.y;
 	}
 }
 
@@ -131,6 +132,15 @@ void Map::update_top_bottom_frames(int pos_y, int shift_y)
 int Map::get_first_corner_frame(int frame_pos, int shift) const
 {
 	return (shift <= 0) ? frame_pos + shift : frame_pos + shift - 1;
+}
+
+sf::Vector2i Map::find_center_frame(const sf::Vector2f center_pos) const
+{
+	sf::Vector2i center_frame_pos = {
+		(int)(center_pos.x / MAP_SCALED_FRAME_SIZE),
+		(int)(center_pos.y / MAP_SCALED_FRAME_SIZE)
+	};
+	return center_frame_pos;
 }
 
 void Map::update_frame_sprite(const sf::Vector2i& frame_pos, const sf::Vector2i& perv_frame_pos)
@@ -195,16 +205,6 @@ sf::Vector2i Map::find_init_frame(void)
 		}
 	}
 	return init_frame_pos;
-}
-
-sf::Vector2i Map::find_center_frame(const sf::View* view) const
-{
-	sf::Vector2f view_center_pos = view->getCenter();
-	sf::Vector2i center_frame_pos = {
-		(int)(view_center_pos.x / MAP_SCALED_FRAME_SIZE),
-		(int)(view_center_pos.y / MAP_SCALED_FRAME_SIZE)
-	};
-	return center_frame_pos;
 }
 
 sf::FloatRect Map::get_solid_frame_rect(const sf::Vector2i& frame_pos, int solidity)

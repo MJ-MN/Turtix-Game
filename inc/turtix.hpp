@@ -23,9 +23,9 @@ const std::string TURTIX_RIGHT_IMAGE_FILE = "./Sprite/turtix_right.png";
 class Turtix : public sf::Drawable {
 private:
 	Direction direction;
-	sf::VertexArray turtixVertices;
-	sf::Texture turtixTextureLeft;
-	sf::Texture turtixTextureRight;
+	sf::VertexArray vertices;
+	sf::Texture textureLeft;
+	sf::Texture textureRight;
 	sf::RenderWindow* window;
 	MovementX* movement_x;
 	MovementY* movement_y;
@@ -36,7 +36,10 @@ private:
 	void move_y(sf::FloatRect& turtixRect, const Key& key, float dt);
 public:
 	Turtix(sf::RenderWindow* _window, Map* _map);
+	Turtix();
 	virtual ~Turtix();
+	Turtix(const Turtix& turtix);
+	Turtix& operator=(const Turtix& turtix);
 	sf::Vector2f get_center_pos(void) const;
 	sf::FloatRect get_rect(void) const;
 	void update_frame_sprite(void);
