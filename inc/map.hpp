@@ -47,7 +47,9 @@ private:
 	int get_first_corner_frame(int frame_pos, int shift) const;
 	int get_frame_number(const sf::Vector2i& frame_pos) const;
 	sf::Vector2i check_frame_pos(int x, int y) const;
-	sf::FloatRect get_solid_frame_rect(const sf::Vector2i& frame_pos, int solidity);
+	sf::FloatRect get_solid_rect(const sf::Vector2i& frame_pos, int solidity);
+	sf::FloatRect get_ladder_rect(const sf::Vector2i& frame_pos);
+	void find_nearby_frames(const sf::FloatRect& rect, sf::Vector2i* frame_pos);
 public:
 	Map();
 	virtual ~Map();
@@ -55,8 +57,9 @@ public:
 	sf::Vector2i get_margin_size(void) const;
 	void init_frames_sprite(const sf::Vector2i& center_pos);
 	void update_frames_sprite(const sf::Vector2f& center_pos);
-	float is_valid_x(const sf::FloatRect& turtixRect, float v_x);
-	float is_valid_y(const sf::FloatRect& turtixRect, float v_y);
+	float is_valid_x(const sf::FloatRect& rect, float v_x);
+	float is_valid_y(const sf::FloatRect& rect, float v_y);
+	bool is_on_the_ladder(sf::FloatRect& rect);
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 

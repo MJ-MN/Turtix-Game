@@ -8,19 +8,17 @@
 #define X_DECELERATION (4.0f * X_ACCELERATION)
 #define Y_ACCELERATION 2000.0f
 #define INITIAL_SPEED 0.1f
-#define JUMP_SPEED 1000.0f
-#define MAX_SPEED 800.0f
+#define MAX_X_SPEED 800.0f
+#define MAX_Y_SPEED 1000.0f
 #define SPEED_STEP (X_DECELERATION * LOOP_TIME_MS / ONE_SECOND_MS)
 
 class Movement {
 protected:
-	float r, v, a;
+	float* r;
+	float v, a;
 
-	void calc_r(float dt);
-	virtual void check_v(float penalty, float dt);
-	void calc_v(float dt);
 public:
-	Movement(float _r, float _v, float _a);
+	Movement(float* _r, float _v, float _a);
 	Movement();
 	virtual ~Movement();
 	float get_r(void) const;
@@ -28,32 +26,27 @@ public:
 	void set_r(float _r);
 	void set_v(float _v);
 	void set_a(float _a);
+	float calc_r(float dt);
+	void calc_v(float dt);
+	void stop(void);
 };
 
 class MovementX : public Movement {
 private:
-	Map* map;
-
-	void check_v(float penalty, float dt);
 public:
-	MovementX(Map* _map, float _r, float _v, float _a);
+	MovementX(float* _r, float _v, float _a);
 	MovementX();
 	~MovementX();
-	void calc_x(sf::FloatRect& rect, float dt);
+	void calc_v(float penalty, float dt);
 };
 
 class MovementY : public Movement {
 private:
-	bool on_the_ground;
-	Map* map;
-
-	void check_v(float penalty, float dt);
 public:
-	MovementY(Map* _map, float _r, float _v, float _a);
+	MovementY(float* _r, float _v, float _a);
 	MovementY();
 	~MovementY();
-	void calc_y(sf::FloatRect& rect, float dt);
-	bool is_on_the_ground(void) const;
+	void calc_v(float penalty, float dt);
 };
 
 #endif /* __MOVEMENT_HPP */

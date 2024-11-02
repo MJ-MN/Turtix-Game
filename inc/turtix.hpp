@@ -18,6 +18,11 @@
 #define TURTIX_SCALED_FRAME_SIZE (TURTIX_SCALE * TURTIX_IMAGE_FRAME_SIZE)
 #define TURTIX_SCALED_FRAME_SIZE_EFF (TURTIX_SCALE * TURTIX_FRAME_SIZE_EFF)
 
+#define X_MOVING (this->movement_x->get_v() > INITIAL_SPEED || \
+	this->movement_x->get_v() < -INITIAL_SPEED)
+#define Y_MOVING (this->movement_y->get_v() > INITIAL_SPEED || \
+	this->movement_y->get_v() < -INITIAL_SPEED)
+
 const std::string TURTIX_LEFT_IMAGE_FILE = "./Sprite/turtix_left.png";
 const std::string TURTIX_RIGHT_IMAGE_FILE = "./Sprite/turtix_right.png";
 const std::string TURTIX_UP_IMAGE_FILE = "./Sprite/turtix_up.png";
@@ -25,18 +30,24 @@ const std::string TURTIX_UP_IMAGE_FILE = "./Sprite/turtix_up.png";
 class Turtix : public sf::Drawable {
 private:
 	Direction direction;
+	bool on_the_ground;
+	bool on_the_ladder;
 	sf::VertexArray vertices;
 	sf::Texture textureLeft;
 	sf::Texture textureRight;
 	sf::Texture textureUp;
 	sf::RenderWindow* window;
+	Map* map;
 	MovementX* movement_x;
 	MovementY* movement_y;
 
 	void load_texture(void);
-	void init_frame_sprite(void);
-	void move_x(sf::FloatRect& turtixRect, const Key& key, float dt);
-	void move_y(sf::FloatRect& turtixRect, const Key& key, float dt);
+	void set_pos(const sf::Vector2f& pos);
+	void set_frame_sprite(const sf::Vector2i& frame_pos);
+	void move_x(const Key& key);
+	void update_x(sf::FloatRect& rect, float dt);
+	void move_y(const Key& key);
+	void update_y(sf::FloatRect& rect, float dt);
 public:
 	Turtix(sf::RenderWindow* _window, Map* _map);
 	Turtix();

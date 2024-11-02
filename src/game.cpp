@@ -11,6 +11,7 @@ TurtixGame::TurtixGame()
 	this->game_finished = false;
 	this->key.up_pressed = false;
 	this->key.last_up_pressed = false;
+	this->key.down_pressed = false;
 	this->key.right_pressed = false;
 	this->key.left_pressed = false;
 	this->window = new sf::RenderWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), GAME_HEADER_NAME);
@@ -64,6 +65,9 @@ void TurtixGame::handle_event(const sf::Event& event)
 		if (event.key.code == sf::Keyboard::Up) {
 			this->key.up_pressed = true;
 		}
+		if (event.key.code == sf::Keyboard::Down) {
+			this->key.down_pressed = true;
+		}
 		if (event.key.code == sf::Keyboard::Right) {
 			this->key.right_pressed = true;
 		}
@@ -73,6 +77,9 @@ void TurtixGame::handle_event(const sf::Event& event)
 	} else if (event.type == sf::Event::KeyReleased) {
 		if (event.key.code == sf::Keyboard::Up) {
 			this->key.up_pressed = false;
+		}
+		if (event.key.code == sf::Keyboard::Down) {
+			this->key.down_pressed = false;
 		}
 		if (event.key.code == sf::Keyboard::Right) {
 			this->key.right_pressed = false;

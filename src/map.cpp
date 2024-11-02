@@ -207,7 +207,7 @@ sf::Vector2i Map::find_init_frame(void)
 	return init_frame_pos;
 }
 
-sf::FloatRect Map::get_solid_frame_rect(const sf::Vector2i& frame_pos, int solidity)
+sf::FloatRect Map::get_solid_rect(const sf::Vector2i& frame_pos, int solidity)
 {
 	int frame_number = get_frame_number(frame_pos);
 	sf::Vector2f rect_pos(0.0f, 0.0f);
@@ -237,76 +237,117 @@ sf::FloatRect Map::get_solid_frame_rect(const sf::Vector2i& frame_pos, int solid
 	return sf::FloatRect(rect_pos, rect_size);
 }
 
-float Map::is_valid_x(const sf::FloatRect& turtixRect, float v_x)
+sf::FloatRect Map::get_ladder_rect(const sf::Vector2i& frame_pos)
 {
-	sf::FloatRect solidFrameRect;
-	float penalty_x = 0.0f;
-	sf::Vector2i frame_pos[4] = {
-		{(int)(turtixRect.left / MAP_SCALED_FRAME_SIZE), (int)(turtixRect.top / MAP_SCALED_FRAME_SIZE)},
-		{(int)(turtixRect.left / MAP_SCALED_FRAME_SIZE) , (int)((turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE)},
-		{(int)((turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE), (int)(turtixRect.top / MAP_SCALED_FRAME_SIZE)},
-		{(int)((turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE), (int)((turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE)}
-	};
+	int frame_number = get_frame_number(frame_pos);
+	sf::Vector2f rect_pos(0.0f, 0.0f);
+	sf::Vector2f rect_size(0.0f, 0.0f);
 
+	switch (frame_number) {
+	case 25:
+		rect_pos = { (frame_pos.x + 0.45f) * MAP_SCALED_FRAME_SIZE, (frame_pos.y + 0.4f) * MAP_SCALED_FRAME_SIZE };
+		rect_size = { 0.1f * MAP_SCALED_FRAME_SIZE, 0.6f * MAP_SCALED_FRAME_SIZE };
+		break;
+	case 26:
+	case 27:
+	case 28:
+		rect_pos = { (frame_pos.x + 0.45f) * MAP_SCALED_FRAME_SIZE, (float)frame_pos.y * MAP_SCALED_FRAME_SIZE };
+		rect_size = { 0.1f * MAP_SCALED_FRAME_SIZE, MAP_SCALED_FRAME_SIZE };
+		break;
+	case 29:
+		rect_pos = { (frame_pos.x + 0.45f) * MAP_SCALED_FRAME_SIZE, (float)frame_pos.y * MAP_SCALED_FRAME_SIZE };
+		rect_size = { 0.1f * MAP_SCALED_FRAME_SIZE, 0.6f * MAP_SCALED_FRAME_SIZE };
+		break;
+	}
+	return sf::FloatRect(rect_pos, rect_size);
+}
+
+void Map::find_nearby_frames(const sf::FloatRect& rect, sf::Vector2i* frame_pos)
+{
+	frame_pos[0] = { (int)(rect.left / MAP_SCALED_FRAME_SIZE), (int)(rect.top / MAP_SCALED_FRAME_SIZE) };
+	frame_pos[1] = {(int)(rect.left / MAP_SCALED_FRAME_SIZE) , (int)((rect.top + rect.height) / MAP_SCALED_FRAME_SIZE) };
+	frame_pos[2] = {(int)((rect.left + rect.width) / MAP_SCALED_FRAME_SIZE), (int)(rect.top / MAP_SCALED_FRAME_SIZE) };
+	frame_pos[3] = {(int)((rect.left + rect.width) / MAP_SCALED_FRAME_SIZE), (int)((rect.top + rect.height) / MAP_SCALED_FRAME_SIZE) };
+}
+
+float Map::is_valid_x(const sf::FloatRect& rect, float v_x)
+{
+	sf::FloatRect solidRect;
+	sf::Vector2i frame_pos[4];
+	float penalty_x = 0.0f;
+
+	find_nearby_frames(rect, frame_pos);
 	for (int i = 0; i < 4; i++) {
 		if (v_x > 0.0f) {
-			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_RIGHT);
-			if (solidFrameRect.width != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_x = solidFrameRect.left - turtixRect.left - turtixRect.width;
+			solidRect = this->get_solid_rect(frame_pos[i], Solidity::TOP_RIGHT);
+			if (solidRect.width != 0.0f && rect.intersects(solidRect)) {
+				penalty_x = solidRect.left - rect.left - rect.width - 1;
 			}
-			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_RIGHT);
-			if (solidFrameRect.width != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_x = solidFrameRect.left - turtixRect.left - turtixRect.width;
+			solidRect = this->get_solid_rect(frame_pos[i], Solidity::DOWN_RIGHT);
+			if (solidRect.width != 0.0f && rect.intersects(solidRect)) {
+				penalty_x = solidRect.left - rect.left - rect.width - 1;
 			}
 		}
 		if (v_x < 0.0f) {
-			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_LEFT);
-			if (solidFrameRect.width != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_x = solidFrameRect.left + solidFrameRect.width - turtixRect.left;
+			solidRect = this->get_solid_rect(frame_pos[i], Solidity::TOP_LEFT);
+			if (solidRect.width != 0.0f && rect.intersects(solidRect)) {
+				penalty_x = solidRect.left + solidRect.width - rect.left + 1;
 			}
-			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_LEFT);
-			if (solidFrameRect.width != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_x = solidFrameRect.left + solidFrameRect.width - turtixRect.left;
+			solidRect = this->get_solid_rect(frame_pos[i], Solidity::DOWN_LEFT);
+			if (solidRect.width != 0.0f && rect.intersects(solidRect)) {
+				penalty_x = solidRect.left + solidRect.width - rect.left + 1;
 			}
 		}
 	}
 	return penalty_x;
 }
 
-float Map::is_valid_y(const sf::FloatRect& turtixRect, float v_y)
+float Map::is_valid_y(const sf::FloatRect& rect, float v_y)
 {
-	sf::FloatRect solidFrameRect;
+	sf::FloatRect solidRect;
+	sf::Vector2i frame_pos[4];
 	float penalty_y = 0.0f;
-	sf::Vector2i frame_pos[4] = {
-		{(int)(turtixRect.left / MAP_SCALED_FRAME_SIZE), (int)(turtixRect.top / MAP_SCALED_FRAME_SIZE)},
-		{(int)(turtixRect.left / MAP_SCALED_FRAME_SIZE), (int)((turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE)},
-		{(int)((turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE), (int)(turtixRect.top / MAP_SCALED_FRAME_SIZE)},
-		{(int)((turtixRect.left + turtixRect.width) / MAP_SCALED_FRAME_SIZE), (int)((turtixRect.top + turtixRect.height) / MAP_SCALED_FRAME_SIZE)}
-	};
 
+	find_nearby_frames(rect, frame_pos);
 	for (int i = 0; i < 4; i++) {
 		if (v_y > 0.0f) {
-			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_LEFT);
-			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_y = solidFrameRect.top - turtixRect.top - turtixRect.height;
+			solidRect = this->get_solid_rect(frame_pos[i], Solidity::DOWN_LEFT);
+			if (solidRect.height != 0.0f && rect.intersects(solidRect)) {
+				penalty_y = solidRect.top - rect.top - rect.height - 1;
 			}
-			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::DOWN_RIGHT);
-			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_y = solidFrameRect.top - turtixRect.top - turtixRect.height;
+			solidRect = this->get_solid_rect(frame_pos[i], Solidity::DOWN_RIGHT);
+			if (solidRect.height != 0.0f && rect.intersects(solidRect)) {
+				penalty_y = solidRect.top - rect.top - rect.height - 1;
 			}
 		}
 		if (v_y < 0.0f) {
-			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_LEFT);
-			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_y = solidFrameRect.top + solidFrameRect.height - turtixRect.top;
+			solidRect = this->get_solid_rect(frame_pos[i], Solidity::TOP_LEFT);
+			if (solidRect.height != 0.0f && rect.intersects(solidRect)) {
+				penalty_y = solidRect.top + solidRect.height - rect.top + 1;
 			}
-			solidFrameRect = this->get_solid_frame_rect(frame_pos[i], Solidity::TOP_RIGHT);
-			if (solidFrameRect.height != 0.0f && turtixRect.intersects(solidFrameRect)) {
-				penalty_y = solidFrameRect.top + solidFrameRect.height - turtixRect.top;
+			solidRect = this->get_solid_rect(frame_pos[i], Solidity::TOP_RIGHT);
+			if (solidRect.height != 0.0f && rect.intersects(solidRect)) {
+				penalty_y = solidRect.top + solidRect.height - rect.top + 1;
 			}
 		}
 	}
 	return penalty_y;
+}
+
+bool Map::is_on_the_ladder(sf::FloatRect& rect)
+{
+	sf::FloatRect ladderRect;
+	sf::Vector2i frame_pos[4];
+
+	find_nearby_frames(rect, frame_pos);
+	for (int i = 0; i < 4; i++) {
+		ladderRect = this->get_ladder_rect(frame_pos[i]);
+		if (rect.width != 0.0f && rect.intersects(ladderRect)) {
+			rect.left = (frame_pos[i].x + 0.5f) * MAP_SCALED_FRAME_SIZE - 0.5f * rect.width;
+			return true;
+		}
+	}
+	return false;
 }
 
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const

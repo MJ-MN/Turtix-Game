@@ -17,6 +17,7 @@ enum Direction {
 struct Key {
 	bool up_pressed;
 	bool last_up_pressed;
+	bool down_pressed;
 	bool right_pressed;
 	bool left_pressed;
 };
