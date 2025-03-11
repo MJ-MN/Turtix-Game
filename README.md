@@ -1,5 +1,6 @@
 # Turtix Game
 Turtix is a 2D game developed by C++ and the SFML library.
+![screenshot](./Turtix.png?raw=true)
 ## Tutorial
 ### Common requirements
 Install the following packages from your package repository (if not installed):
